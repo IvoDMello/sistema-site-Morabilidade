@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ imovel.titulo }} — Morabilidade{% endblock %}
+
+{% block body %}
+<nav class="bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="/" class="text-2xl font-bold text-blue-700">Morabilidade</a>
+    <a href="/imoveis" class="text-sm text-gray-500 hover:text-blue-600">&larr; Voltar</a>
+  </div>
+</nav>
+
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <!-- Galeria -->
+  {% if imovel.fotos %}
+  <div x-data="{ foto: '{{ imovel.fotos[0].caminho }}' }" class="mb-8">
+    <img :src="foto" class="w-full h-96 object-cover rounded-xl mb-2" />
+    <div class="flex gap-2 overflow-x-auto">
+      {% for f in imovel.fotos %}
+      <img src="{{ f.caminho }}" @click="foto='{{ f.caminho }}'" class="h-20 w-28 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-500" />
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Info principal -->
+    <div class="lg:col-span-2">
+      <p class="text-xs text-blue-600 font-semibold uppercase">{{ imovel.tipo_imovel }} · {{ imovel.finalidade }}</p>
+      <h1 class="text-3xl font-bold mt-1 mb-2">{{ imovel.titulo }}</h1>
+      {% if imovel.mostrar_endereco %}
+      <p class="text-gray-500 mb-4">{{ imovel.bairro }}{% if imovel.logradouro %}, {{ imovel.logradouro }} {{ imovel.numero }}{% endif %} — {{ imovel.cidade }}/{{ imovel.estado }}</p>
+      {% else %}
+      <p class="text-gray-500 mb-4">{{ imovel.bairro }} — {{ imovel.cidade }}/{{ imovel.estado }}</p>
+      {% endif %}
+
+      <!-- Características -->
+      <div class="flex flex-wrap gap-4 mb-6 text-sm text-gray-600 bg-gray-100 rounded-xl p-4">
+        {% if imovel.area_util %}<div><strong>{{ imovel.area_util }} m²</strong><br/>Área útil</div>{% endif %}
+        {% if imovel.quartos %}<div><strong>{{ imovel.quartos }}</strong><br/>Quartos</div>{% endif %}
+        {% if imovel.suites %}<div><strong>{{ imovel.suites }}</strong><br/>Suítes</div>{% endif %}
+        {% if imovel.banheiros %}<div><strong>{{ imovel.banheiros }}</strong><br/>Banheiros</div>{% endif %}
+        {% if imovel.vagas_garagem %}<div><strong>{{ imovel.vagas_garagem }}</strong><br/>Vagas</div>{% endif %}
+      </div>
+
+      {% if imovel.descricao %}
+      <h2 class="font-bold text-lg mb-2">Descrição</h2>
+      <p class="text-gray-700 whitespace-pre-line">{{ imovel.descricao }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar contato/preço -->
+    <div>
+      <div class="bg-white rounded-xl shadow p-6 sticky top-6">
+        {% if imovel.preco %}
+        <p class="text-3xl font-bold text-blue-700 mb-1">R$ {{ "{:,.0f}".format(imovel.preco) }}</p>
+        {% if imovel.finalidade == 'aluguel' %}<p class="text-sm text-gray-400">/mês</p>{% endif %}
+        {% endif %}
+        {% if imovel.preco_condominio %}<p class="text-sm text-gray-500 mt-1">Condomínio: R$ {{ "{:,.0f}".format(imovel.preco_condominio) }}</p>{% endif %}
+        {% if imovel.preco_iptu %}<p class="text-sm text-gray-500">IPTU: R$ {{ "{:,.0f}".format(imovel.preco_iptu) }}/ano</p>{% endif %}
+
+        <form x-data="contatoImovel({{ imovel.id }})" @submit.prevent="enviar" class="mt-6 space-y-3">
+          <input x-model="form.nome_contato" placeholder="Nome" required class="w-full border rounded px-3 py-2 text-sm" />
+          <input x-model="form.telefone_contato" placeholder="WhatsApp" class="w-full border rounded px-3 py-2 text-sm" />
+          <textarea x-model="form.mensagem" placeholder="Mensagem" rows="3" class="w-full border rounded px-3 py-2 text-sm"></textarea>
+          <button class="w-full bg-blue-700 text-white py-2 rounded font-semibold text-sm hover:bg-blue-800">Tenho interesse</button>
+          <p x-show="sucesso" class="text-green-600 text-sm text-center" x-text="sucesso"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function contatoImovel(imovelId) {
+  return {
+    form: { imovel_id: imovelId, nome_contato: '', telefone_contato: '', mensagem: '', origem: 'site' },
+    sucesso: '',
+    async enviar() {
+      const resp = await fetch('/contato', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.form),
+      });
+      if (resp.ok) {
+        this.sucesso = 'Mensagem enviada! Em breve entraremos em contato.';
+      }
+    }
+  }
+}
+</script>
+{% endblock %}

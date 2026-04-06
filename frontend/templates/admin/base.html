@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Admin — Morabilidade{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body class="bg-gray-100" x-data="adminApp()">
+
+<!-- Sidebar + Layout -->
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 text-white flex flex-col">
+    <div class="px-6 py-5 border-b border-gray-700">
+      <span class="text-xl font-bold text-blue-400">Morabilidade</span>
+      <p class="text-xs text-gray-400 mt-1">Sistema Interno</p>
+    </div>
+    <nav class="flex-1 px-4 py-6 space-y-1 text-sm">
+      <a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700">Dashboard</a>
+      <a href="/admin/imoveis" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700">Imóveis</a>
+      <a href="/admin/proprietarios" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700">Proprietários</a>
+      <a href="/admin/clientes" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700">Clientes / Leads</a>
+      <a href="/admin/relatorios" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700">Relatórios</a>
+      <hr class="border-gray-700 my-2" />
+      <a href="/admin/usuarios" class="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700">Usuários</a>
+    </nav>
+    <div class="px-4 py-4 border-t border-gray-700 text-xs text-gray-400">
+      <button @click="logout()" class="hover:text-white">Sair</button>
+    </div>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <main class="flex-1 p-8">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script src="/static/js/admin.js"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

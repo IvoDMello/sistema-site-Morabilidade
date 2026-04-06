@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Imóveis — Morabilidade{% endblock %}
+
+{% block body %}
+<nav class="bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="/" class="text-2xl font-bold text-blue-700">Morabilidade</a>
+  </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <!-- Filtros -->
+  <form method="get" class="bg-white rounded-xl shadow p-4 mb-8 flex flex-wrap gap-3">
+    <input name="bairro" value="{{ filtros.get('bairro', '') }}" placeholder="Bairro" class="border rounded px-3 py-2 text-sm" />
+    <select name="finalidade" class="border rounded px-3 py-2 text-sm">
+      <option value="">Finalidade</option>
+      <option value="venda" {% if filtros.get('finalidade') == 'venda' %}selected{% endif %}>Venda</option>
+      <option value="aluguel" {% if filtros.get('finalidade') == 'aluguel' %}selected{% endif %}>Aluguel</option>
+    </select>
+    <select name="tipo" class="border rounded px-3 py-2 text-sm">
+      <option value="">Tipo</option>
+      <option value="apartamento">Apartamento</option>
+      <option value="casa">Casa</option>
+      <option value="terreno">Terreno</option>
+      <option value="sala_comercial">Sala Comercial</option>
+    </select>
+    <select name="quartos" class="border rounded px-3 py-2 text-sm">
+      <option value="">Quartos</option>
+      <option value="1">1+</option>
+      <option value="2">2+</option>
+      <option value="3">3+</option>
+      <option value="4">4+</option>
+    </select>
+    <button class="bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold">Filtrar</button>
+    <a href="/imoveis" class="text-sm text-gray-400 py-2">Limpar</a>
+  </form>
+
+  <p class="text-sm text-gray-500 mb-4">{{ imoveis | length }} imóvel(is) encontrado(s)</p>
+
+  {% if imoveis %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for imovel in imoveis %}
+    <a href="/imoveis/{{ imovel.slug }}" class="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden">
+      {% set capa = imovel.fotos | selectattr('capa') | first %}
+      {% if capa %}
+      <img src="{{ capa.caminho }}" alt="{{ imovel.titulo }}" class="w-full h-48 object-cover" />
+      {% else %}
+      <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">Sem foto</div>
+      {% endif %}
+      <div class="p-4">
+        <p class="text-xs text-blue-600 font-semibold uppercase">{{ imovel.tipo_imovel }} · {{ imovel.finalidade }}</p>
+        <h3 class="font-bold mt-1">{{ imovel.titulo }}</h3>
+        <p class="text-sm text-gray-500">{{ imovel.bairro }}, {{ imovel.cidade }}</p>
+        {% if imovel.preco %}
+        <p class="mt-2 font-bold text-blue-700">R$ {{ "{:,.0f}".format(imovel.preco) }}</p>
+        {% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-20 text-gray-400">Nenhum imóvel encontrado com os filtros selecionados.</div>
+  {% endif %}
+</div>
+{% endblock %}

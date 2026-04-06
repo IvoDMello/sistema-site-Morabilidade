@@ -1,0 +1,12 @@
+/* Estilos customizados — o restante é via Tailwind CDN */
+
+/* Transições suaves em links */
+a { transition: color 0.15s ease; }
+
+/* Galeria de fotos */
+.foto-thumb:hover { opacity: 0.85; }
+
+/* Scrollbar sutil */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
